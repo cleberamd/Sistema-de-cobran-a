@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" />
+		<p:fieldset legend="Renegociações Geradas." style="margin-bottom:20px" >
+			<f:facet name="header">
+				<h:outputText value="teste" />
+			</f:facet>
+			<p:dataTable var="xp" value="#{parcelaR.listaclienteR}" 
+				filteredValue="#{parcelaR.clienteFiltrado}" rowKey="#{xp.codcfo}" id="clientesR"
+				widgetVar="clienteTable" scrollable="false"
+				emptyMessage="Sem registro!" rows="11" paginator="true" 
+				paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+				<f:facet name="header">
+					<p:outputPanel style="text-align: left">
+						<h:outputText value="Localizar: " />
+						<p:inputText id="globalFilter"
+							onkeyup="if (event.keyCode == 13){PF('clienteTable').filter();}"
+							style="width:150px" />
+					</p:outputPanel>
+				</f:facet>
+
+
+				<p:column style="width:50px">
+					<p:rowToggler />
+				</p:column>
+				<p:column headerText="codcfo" filterBy="#{xp.codcfo}" 
+					filterStyle="display: none" style="width:150px">
+
+
+					<h:outputText value="#{xp.codcfo}" />
+				</p:column>
+				<p:column headerText="Cliente" filterBy="#{xp.nome}"
+					filterStyle="display: none">
+					<h:outputText value="#{xp.nome}" />
+				</p:column>
+				<p:column headerText="QtdParcelas"
+					style="width:150px;text-align: center">
+					<h:outputText value="#{xp.getParcelasR().size()}" />
+				</p:column>
+
+				<p:column headerText="Valor" style="width:150px">
+					<h:outputText value="#{xp.valorS}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+
+				</p:column>
+
+
+
+				<p:rowExpansion>
+					<p:dataTable style="width:100%" id="checkboxDT" var="p"
+						widgetVar="parSelec" value="#{xp.parcelasR}"
+						selection="#{parcelaR.parcelasSelecionadas}" rowKey="#{p.id}">
+
+						<p:ajax event="rowSelectCheckbox"
+							listener="#{parcelaR.onRowSelect}" global="false" />
+						<p:ajax event="rowUnselectCheckbox"
+							listener="#{parcelaR.unRowSelect}" global="false" />
+						<p:ajax event="toggleSelect" listener="#{parcelaR.onRowSelectAll}"
+							global="false" />
+
+						<p:column selectionMode="multiple"
+							style="width:50px;text-align:center" />
+
+
+
+						<p:column headerText="Classificação">
+							<h:outputText value="#{p.tipo}" />
+						</p:column>
+
+
+
+<p:column filterBy="#{p.status}"  filterMatchMode="in">
+            <f:facet name="filter" >
+                <p:selectCheckboxMenu  label="Status" onchange="PF('parSelec').filter()" panelStyle="width:125px" scrollHeight="50" styleClass="selectBoxStyle"  >
+                    <f:selectItems value="#{parcelaR.statusP}" />
+                </p:selectCheckboxMenu>
+            </f:facet>
+            <h:outputText value="#{p.status}" />
+        </p:column>
+
+
+						<p:column headerText="Valor" style="width:150px">
+							<h:outputText value="#{p.valorMaisTaxa}">
+								<f:convertNumber locale="pt_BR" type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Vencimento" style="width:150px">
+							<h:outputText value="#{p.vencimento}">
+								<f:convertDateTime currencyCode="BRL" dateStyle="long"
+									pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<f:facet name="footer" >
+							<div align="left">
+								<p:commandButton action="#{parcelaR.efetivaParcelaG}" 
+									icon=" ui-icon-check " title="View" update=":form :form:msgs">
+
+								</p:commandButton>
+								<p:commandButton onstart="PF('parDialog').show()"
+									style="margin-left:5px;" icon=" ui-icon-trash " title="View"
+									global="false">
+
+								</p:commandButton>
+							</div>
+						</f:facet>
+
+
+					</p:dataTable>
+				</p:rowExpansion>
+
+			</p:dataTable>
+		</p:fieldset>
+		<p:dialog header="Opções" widgetVar="parDialog" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="false"
+			closable="false" position="center center">
+			<p:outputPanel id="ParDetail" style="text-align:center;">
+				<h:outputText
+					value="Ao excluir uma parcela todas parcelas relacionadas também serão excluidas voltando ao painel de boletos em atrazo. Deseja excluir?" />
+
+
+				<div class="col-md-4" style="width: 50%; margin-top: 10px;">
+					<p:commandButton value="Sim" 
+						action="#{parcelaR.cancelaRenegociacao}"
+						oncomplete="PF('parDialog').hide();" title="Cancela Renegociacões" 
+						update="form:clientesR:checkboxDT :form :form:msgs" />
+				</div>
+				<div class="col-md-4" style="width: 50%; margin-top: 10px;">
+					<p:commandButton value="Não" onclick="PF('parDialog').hide();"
+						title="Cancela ação" />
+				</div>
+
+
+			</p:outputPanel>
+
+		</p:dialog>
+	</h:form>
+</ui:composition>
+

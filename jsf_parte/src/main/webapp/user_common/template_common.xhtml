@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title><ui:insert name="title">
+            Engepar.com
+        </ui:insert></title>
+	<h:outputStylesheet library="custom/css" name="loading.css" />
+	<h:outputStylesheet library="bootstrap/css" name="bootstrap.min.css" />
+	<h:outputStylesheet library="bootstrap/css"	name="bootstrap-theme.min.css" />
+	<h:outputStylesheet library="custom/css" name="print.css" media="print" />
+	<h:outputScript library="bootstrap/js" name="bootstrap.min.js" />
+	<h:outputScript library="jquery" name="jquery-2.1.4.min.js" />
+
+	<style>
+.ui-widget {
+	font-size: 12px !important;
+}
+
+.ui-growl {
+	position:fixed;
+	top:54px;
+	right:calc(50% - 150px);
+	width: 300px;
+}
+.ui-fieldset, .ui-fieldset .ui-fieldset-legend {
+background-color: transparent;
+margin-bottom:2px;
+font-size: 12px !important;
+align-content: center;
+}
+
+.modal-transparente  {
+background-color: transparent;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border:none;
+font-size: 12px !important;
+
+}
+
+
+
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
+    width: 25px;
+}
+/*
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-label {
+    width: 100px;
+   height: 15px;
+}*/
+
+.selectBoxStyle  {
+    width: 125px;
+   height: 22px;
+}
+.ui-selectcheckboxmenu-header {
+    display:none;
+}
+
+
+</style>
+
+	<script>
+
+
+        $a = jQuery.noConflict();
+        $a(document).ready(function() {
+            var heightWindow = $a(window).height();
+            var heightBody   = document.body.clientHeight;
+            
+            if(heightWindow > heightBody){
+                $a("#footer").css('position', 'fixed');
+                $a("#footer").css('bottom', '0');
+            }                
+        });
+    </script>
+<p:idleMonitor timeout="360000" > 
+<p:ajax event="idle"  listener="#{inicio.sessaoFinalizada}" oncomplete="self.location= '../public/index.xhtml';"    />
+</p:idleMonitor>
+</h:head>
+<h:body>
+	<div>
+		<ui:insert name="nav_bar">
+
+		</ui:insert>
+	</div>
+
+	<div class="container">
+		<ui:insert name="container">
+
+		</ui:insert>
+
+
+	</div>
+	<p:ajaxStatus onstart="PF('ajaxLoading').show();" oncomplete="PF('ajaxLoading').hide();"/>
+<p:dialog modal="true" widgetVar="ajaxLoading" closable="false" showHeader="false" resizable="false" styleClass="modal-transparente"  >
+
+
+        <p:graphicImage library="icones"  name="ajaxloader.gif" />
+   
+		</p:dialog>
+	<div id="footer"
+		style="padding-top: 10px; margin-top: 90px; width: 100%; background-color: #EEEEEE;">
+		<ui:insert name="nav_footer">
+			<ui:include src="/public/footer.xhtml" />
+		</ui:insert>
+	</div>
+</h:body>
+</html>

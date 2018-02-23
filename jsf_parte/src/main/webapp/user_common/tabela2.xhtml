@@ -1,0 +1,495 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<p:fieldset legend="#{xparcela.listaParcela[0].cliente.nome}" id="renegociacaoClient"  >
+
+	<h:form id="form"  onkeypress="return event.keyCode != 13" >
+	
+		<p:growl id="msgs" showDetail="true" life="2000" />
+
+		<div class="row">
+			
+			<div class="col-md-8" align="left" style="margin-bottom: 10px;padding-right: 10px ">
+
+				 				
+
+			</div>
+			
+			<div class="col-md-4" align="right" style="margin-bottom: 10px;padding-right: 10px ">
+
+				<p:outputLabel for="dataAte" value="DIAS DE ATRASO ATÉ:  &#160;" />
+
+				<p:calendar id="dataAte" value="#{xparcela.dataAte2}"
+					pattern="dd/MM/yyyy" mask="true" size="8">
+					<p:ajax event="dateSelect" listener="#{xparcela.dataAte}"	update="form :form1:painelParc" global="false"/>
+				</p:calendar>
+
+
+			</div>
+
+		</div>
+
+
+		<div class="row" >
+<p:remoteCommand name="rowDelet" action="#{xparcela.deletePar}" update="form parcelasP msgs " global="false" />
+			<p:dataTable id="parcelasP" var="par" value="#{xparcela.listaParcela}" selection="#{xparcela.parcelaSelecionadas}" rowKey="#{par.idlan}"
+				style="margin-bottom:20px;"  >
+
+				<p:column selectionMode="multiple" style="width:50px;text-align:center;border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;border-left:0.5px solid #a8a8a8;" />
+				
+				
+				
+				<p:column headerText="VENCIMENTO" style="border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;">
+					<h:outputText value="#{par.vencimento}">
+						<f:convertDateTime  currencyCode="BRL" dateStyle="long"
+							pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText=" CLASS. FINANCEIRA" style="width:300px;border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;" >
+					<h:outputText value="#{par.classFinanceira}"/>
+				</p:column>
+				
+				<p:column headerText=" VALOR PARCELA" style="width:150px;border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;">
+					<h:outputText value="#{par.valor}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText=" MULTA " style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-left-color: transparent;border-style: solid;">
+					<h:outputText value="#{par.taxas[0].valor}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="JUROS" style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-left-color: transparent;border-style: solid;">
+					<h:outputText value="#{par.taxas[1].valor}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="DEV.BL." style="border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;">
+					<h:outputText value="#{par.taxas[2].valor}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="TOTAL" style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-left-color: transparent;border-style: solid;">
+					<h:outputText value="#{par.totalJuros}">
+						<f:convertNumber locale="pt_BR" type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="DIAS/ATRASO" style="text-align:right;border-right:0.5px solid #a8a8a8;border-top:0.5px solid #a8a8a8;">
+					<h:outputText value="#{par.diasAtraso}" />
+
+				</p:column >
+				
+				
+<p:column id="deleta" styleClass="no-print" style="width:50px;" >
+
+                <p:commandButton title="deleta" icon="ui-icon-trash" 
+                                    oncomplete="rowDelet()">
+                    <f:setPropertyActionListener value="#{par}" target="#{xparcela.parcelaSelecionada}" />
+                </p:commandButton>
+            </p:column>
+
+
+
+
+				<p:columnGroup type="footer" >
+					<p:row>
+					<p:column style="border-width: 0.5px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-style: solid;" >
+					<f:facet name="footer">
+						
+							<p:commandButton action="#{xparcela.calculaSelecionada}" styleClass="no-print" icon="ui-icon-calculator" title="calcular"  update=":form:msgs :form1:painelParc parcelasP :form3:pars2" global="false"/>
+								
+
+						
+					</f:facet>
+					</p:column>
+					<p:column style="text-align:left;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;"/>
+						<p:column footerText="Total: " style="text-align:right;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;" />
+
+						<p:column style="text-align:left;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;" colspan="2">
+							<f:facet name="footer">
+								<h:outputText value="#{xparcela.totalSemJuros}">
+									<f:convertNumber locale="pt_BR" type="currency" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						<p:column style="text-align:left;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;"/>
+						<p:column footerText="Total: " style="text-align:right;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;" />
+
+						<p:column style="text-align:left;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;">
+							<f:facet name="footer">
+								<h:outputText value="#{xparcela.totalVparcelas}">
+									<f:convertNumber locale="pt_BR" type="currency" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+	
+						<p:column style="text-align:left;border-width: 0.5px 0.5px 0.5px 0px; border-color:#a8a8a8;border-style: solid;"  />
+						<p:column styleClass="no-print" style="text-align:left;border-width: 0.5px 0.5px 0.5px 0px; border-color:#a8a8a8;border-style: solid;"  />
+						
+
+					</p:row>
+				</p:columnGroup>
+
+
+			</p:dataTable>
+
+
+
+
+
+		</div>
+			</h:form>
+			
+		<div class="row">
+		
+			<div class="col-md-6" align="left" >
+
+	<h:form id="form1">
+
+				<p:panelGrid id="painelParc" style="margin-bottom:20px">
+					<f:facet name="header">
+						<p:row>
+							<p:column colspan="5" style="border-width: 0.5px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-style: solid;">Valor Renegociação 
+            <h:outputText value="#{xparcela.totalVparcelas}"
+									id="totalVparcela">
+									<f:convertNumber locale="pt_BR" type="currency" />
+								</h:outputText>
+
+
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="1" style="border-width: 0px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-right-color: transparent;border-style: solid;" >Entrada</p:column>
+							<p:column colspan="1" style="border-width: 0px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-right-color: transparent;border-style: solid;">Data da Entrada </p:column>
+							<p:column colspan="1" style="border-width: 0px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-right-color: transparent;border-style: solid;">Diferença a dividir</p:column>
+							<p:column style="border-width: 0px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-right-color: transparent;border-style: solid;">X Vezes</p:column>
+							<p:column style="border-width: 0px 0.5px 0.5px 0px; border-color:#a8a8a8;border-style: solid;"></p:column>
+						</p:row>
+
+					</f:facet>
+
+					<p:row>
+
+						<p:column style="font-weight: bold;border-width: 0.5px 0.5px 0.5px 0.5px; border-color:#a8a8a8;border-style: solid;">
+							<p:inputText value="#{xparcela.valorEntrada}" id="vEntrada" size="10" >
+								<p:ajax update="vDiferenca" global="false"/>
+								<f:convertNumber pattern="#0.00" />
+							</p:inputText>
+						</p:column>
+
+						<p:column style="font-weight: bold;text-align: center;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;">
+							
+							<h:outputText value="#{xparcela.dataEntrada}">
+							<f:convertDateTime currencyCode="BRL" dateStyle="long"
+							pattern="dd/MM/yyyy" />
+							
+							</h:outputText>
+
+						</p:column>
+
+						<p:column style="font-weight: bold;border-width: 0.5px 0.5px 0.5px 0px; border-color:#a8a8a8;border-style: solid;">
+							<p:inputText value="#{xparcela.valorDiferenca}" id="vDiferenca" size="10">
+								<p:ajax update="vEntrada" global="false" />
+								<f:convertNumber pattern="#0.00" />
+							</p:inputText>
+						</p:column>
+						<p:column style="font-weight: bold;border-width: 0.5px 0px 0.5px 0px; border-color:#a8a8a8;border-style: solid;">
+
+							<p:inputText value="#{xparcela.xVezes}" size="1" id="xvezes"
+								style="text-align:center">
+								<f:convertNumber integerOnly="true" minIntegerDigits="1" />
+
+								<p:ajax  global="false"/>
+							</p:inputText>
+
+						</p:column>
+						
+						<p:column colspan="1" style="border-width: 0.5px 0.5px 0.5px 0px; border-color:#a8a8a8;border-style: solid;">
+							<p:commandButton action="#{xparcela.calculaParcelasR}" styleClass="no-print"
+								icon=" ui-icon-calculator" title="Calcular" update=":form3:pars2 vDiferenca vEntrada xvezes :form:msgs" global="false">
+							</p:commandButton>
+						</p:column>
+
+					</p:row>
+
+
+
+					<f:facet name="footer">
+
+						<p:row>
+							<p:column colspan="5" style="text-align: right" />
+
+
+						</p:row>
+
+					</f:facet>
+
+				</p:panelGrid>
+				
+		</h:form>
+	<h:form id="form2" styleClass="no-print">
+				<p:dataTable var="taxa" value="#{xparcela.t}" editable="true"
+					editMode="cell" widgetVar="cellTaxas"
+					style="width:84%;">
+					<f:facet name="header">
+          Tabela de Taxas
+       </f:facet>
+					<p:ajax event="cellEdit" listener="#{xparcela.onCellEdit}"
+						update=":form:parcelasP :form1:totalVparcela" />
+					<p:column headerText="TAXA">
+						<h:outputText value="#{taxa.nome}" />
+					</p:column>
+
+					<p:column headerText="Valor">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{taxa.percentual}" decimalPlaces="6" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{taxa.percentual}" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+				</p:dataTable>
+
+
+
+				
+				
+				<p:panelGrid id="painelNota" style="width:84%;margin-top:5px" >
+					<p:row>
+
+						<p:column colspan="1">
+							<p:commandButton id="notaBtn" value="Anotações" type="button" global="false" />
+							<p:overlayPanel id="notaPanel" for="notaBtn" hideEffect="fade"
+								dynamic="true" >
+
+
+								<p:dataTable var="nota" value="#{xparcela.listNota}" style="height: 316px"
+									id="notacao" 
+									
+									scrollRows="20" scrollable="true" liveScroll="true" scrollHeight="280">
+
+						
+									<p:column headerText="DATA" style="width:20%" sortBy="#{nota.data}">
+										<h:outputText value="#{nota.data}">
+
+											<f:convertDateTime currencyCode="BRL" dateStyle="long"
+												pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="NOTA">
+
+										<h:outputText value="#{nota.texto}" />
+
+									</p:column>
+									<p:column headerText="usuario" style="width:20%" sortBy="#{nota.usuario}">
+
+										<h:outputText value="#{nota.usuario}" />
+
+									</p:column>
+									
+
+								</p:dataTable>
+
+							</p:overlayPanel>
+
+
+						</p:column>
+
+
+
+
+
+
+						<p:column colspan="1" style="magin-top:5px">
+							<p:inputTextarea rows="2" cols="30" id="areaNota" required="true" requiredMessage="O campo deve ser preenchido!"
+								value="#{xparcela.areaAnotacao}"  />
+						</p:column>
+						<p:column colspan="1">
+							<p:commandButton action="#{xparcela.salvaAnotacao}" styleClass="no-print"
+								icon="ui-icon-disk" title="Salva" update="form2:notacao form2:areaNota :form:msgs" global="false">
+							</p:commandButton>
+						</p:column>
+
+					</p:row>
+
+				</p:panelGrid>
+				
+	</h:form>
+			</div >
+			<h:form id="form3" >
+				<div class="col-md-6" align="left"  >
+			
+			
+				
+			<p:remoteCommand name="onCellEdit" update="pars2"  global="false"/>
+				<p:dataTable id="pars2" var="par"  
+					value="#{xparcela.parcelasGeradas}" editable="true" editMode="cell"
+					widgetVar="cellPars"  >
+	
+      	 
+
+				<p:columnGroup type="header" >
+					<p:row>
+					<p:column style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-style: solid;" colspan="4">
+					<f:facet name="header">
+							Parcelas Geradas
+	
+					</f:facet>
+					</p:column>
+					</p:row>
+					<p:row>
+					<p:column style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-style: solid;" >
+					<f:facet name="header">VENCIMENTO
+					</f:facet>
+					</p:column>
+					<p:column style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-left-color: transparent;border-style: solid;" >
+					<f:facet name="header">VALOR LIQUIDO
+					</f:facet>
+					</p:column>
+					<p:column style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;" >
+					<f:facet name="header">
+					TAXA BOLETO
+					</f:facet>
+					</p:column>
+					<p:column style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;" >
+					<f:facet name="header">
+					VALOR BOLETO
+					</f:facet>
+					</p:column>
+					
+					</p:row>	
+	
+
+					
+				</p:columnGroup>
+
+
+
+
+					<p:ajax  event="cellEdit" listener="#{xparcela.onCellEditPar}" update=":form:msgs" 
+						oncomplete="onCellEdit()" global="false"/>
+
+					<p:column headerText="VENCIMENTO" style="border-width: 0.5px 0.5px 0px 0.5px; border-color:#a8a8a8;border-style: solid;">
+						<h:outputText value="#{par.vencimento}">
+							<f:convertDateTime currencyCode="BRL" dateStyle="long"
+								pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="VALOR LIQUIDO " style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;">
+
+								<h:outputText value="#{par.valor}">
+									<f:convertNumber locale="pt_BR" type="currency" />
+								</h:outputText>
+
+					</p:column>
+					<p:column headerText="TAXA BOLETO" style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;">
+						<h:outputText value="#{xparcela.custasBL.percentual}" rendered="#{xparcela.parcelasGeradas.size()>1}">
+							<f:convertNumber locale="pt_BR" type="currency" />
+						</h:outputText>
+						<h:outputText value="#{0.0}" rendered="#{xparcela.parcelasGeradas.size()==1}">
+							<f:convertNumber locale="pt_BR" type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="VALOR BOLETO " style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{par.valorMaisTaxa}">
+									<f:convertNumber locale="pt_BR" type="currency" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{par.valorMaisTaxa}" styleClass="no-print">
+									
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+								
+			
+					
+					<p:columnGroup type="footer" >
+					<p:row>
+					<p:column style="text-align:left; border-width: 0.5px 0px 0px 0.5px; border-color:#a8a8a8;border-style: solid;" >
+					<f:facet name="footer">
+						
+							<p:commandButton onclick="salvaPG()"  styleClass="no-print"
+								icon="ui-icon-disk" title="Salva"  update=":form:msgs "  global="false">
+ 									<p:printer target="renegociacaoClient" />
+							</p:commandButton>	
+
+						
+					</f:facet>
+						<f:facet name="footer">
+					
+
+					</f:facet>
+					</p:column>
+					<p:column style="border-width: 0.5px 0.5px 0px 0px; border-color:#a8a8a8;border-style: solid;" colspan="3"/>
+						
+	
+
+					</p:row>
+				</p:columnGroup>
+
+
+
+				</p:dataTable>
+		<p:remoteCommand name="salvaPG" action="#{xparcela.salvaParcelaR}" oncomplete="PF('parDialog').show()" update=":form:msgs " global="false" />
+			
+
+
+</div>
+<p:dialog header="Opções" widgetVar="parDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" closable="false"  styleClass="no-print">
+	        <p:outputPanel id="ParDetail" style="text-align:center;"  >
+	          				
+	            
+				<div class="col-md-4" style="width: 33%;margin-top: 10px;">
+	            
+							<p:commandButton value="Inicio" action="#{xparcela.vaiparaCliente}"
+									icon="ui-icon-home" title="vai para lista de clientes" style="height: 100px; width: 200px; margin: 10px;" ajax="false"  />
+	          </div>
+	            <div class="col-md-4" style="width: 33%;margin-top: 10px; ">
+	            <p:commandButton value="Pendente" action="#{xparcela.vaiparaRepPendente}"
+									icon="ui-icon-info" title="Negociações pendentes" style="height: 100px; width: 200px; margin: 10px;" ajax="false"   />
+	            </div>
+	            <div class="col-md-4" style="width: 34%;margin-top: 10px;">
+	            
+							<p:commandButton value="Continuar" onclick="PF('parDialog').hide();"
+									icon=" ui-icon-arrowreturn-1-s" title="lista de parcelas" style="height: 100px; width: 200px; margin: 10px;" ajax="false" update=":form:parcelasP :form1:painelParc :form3:pars2 " />
+	          </div>
+	           
+	                
+	       	 </p:outputPanel>
+			</p:dialog>
+
+</h:form>
+		</div>
+
+
+
+
+
+
+</p:fieldset>
+
+
+
+
+			
+</ui:composition>
+

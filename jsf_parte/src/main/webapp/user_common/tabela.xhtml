@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" />
+<p:fieldset legend="Clientes com boletos em atraso." >
+			
+		<p:dataTable var="xp" value="#{cliente.listaClient}"  filteredValue="#{cliente.clienteFiltrado}" selectionMode="single" selection="#{cliente.client}" rowKey="#{xp.codcfo}" id="clientes" widgetVar="clienteTable"
+			scrollable="false" emptyMessage="Sem registro!" rows="11"
+			paginator="true" paginatorPosition="bottom"  
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			        <f:facet name="header">  
+                                    <p:outputPanel style="text-align: left">                                        
+                                        <h:outputText value="Localizar: " />  
+                                        <p:inputText id="globalFilter" onkeyup="if (event.keyCode == 13){PF('clienteTable').filter();}" style="width:150px" />                                        
+                                    </p:outputPanel>  
+                                </f:facet>
+
+        <p:ajax event="rowSelect" listener="#{cliente.onRowSelect}" oncomplete="self.location= '../user_common/listaPCliente.xhtml';"  />
+ 
+			<p:column headerText="codcfo" filterBy="#{xp.codcfo}" sortBy="#{xp.codcfo}" filterStyle="display: none" 	style="width:150px">
+
+
+				<h:outputText value="#{xp.codcfo}" />
+			</p:column>
+			<p:column headerText="Cliente" filterBy="#{xp.nome}" sortBy="#{xp.nome}" filterStyle="display: none" >
+				<h:outputText value="#{xp.nome}" />
+			</p:column>
+			<p:column headerText="QtdParcelas" sortBy="#{xp.getParcelas().size()}"
+				style="width:150px;text-align: center">
+				<h:outputText value="#{xp.getParcelas().size()}" />
+			</p:column>
+
+			<p:column headerText="Valor" sortBy="#{xp.valorS}" style="width:150px" >
+				<h:outputText value="#{xp.valorS}">
+					<f:convertNumber locale="pt_BR" type="currency" />
+				</h:outputText>
+
+			</p:column>
+		
+
+
+		</p:dataTable>
+		</p:fieldset>
+	</h:form>
+</ui:composition>
+

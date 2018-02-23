@@ -1,0 +1,126 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:p="http://primefaces.org/ui">
+    <div class="col-md-8" >
+        
+        <br />
+        <h:form  class="form-horizontal" role="form" id="form3">
+        <p:growl id="msgs" showDetail="true" />
+		<p:fieldset rendered="#{config.exibeDiv == 'cadastro'}" legend="Criar um usuario."  >
+            <div class="form-group">
+                <h:outputLabel for="inputEmail" value="Email"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-5">
+                    <h:inputText value="#{user.profile.email}" required="#{param['form:idBotao']==null}"
+                        class="form-control" id="inputEmail"
+                        pt:placeholder="Email"
+                        validatorMessage="email inválido."
+                        requiredMessage="é necessário que você informe seu email.">
+                        <f:validateRegex pattern="[a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9\-\_\.]+" />
+                        <f:ajax event="blur" render="m_inputEmail" />
+                    </h:inputText>
+                    <h:message id="m_inputEmail" for="inputEmail"
+                        style="color:#D74937;" />
+                </div>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="inputuser" value="Usuário"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-6">
+                    <h:inputText value="#{user.user.login}" class="form-control"
+                        id="inputuser" required="#{param['form:idBotao']==null}"
+                        pt:placeholder="Usuário entre 6 e 20 caracteres"
+                        requiredMessage="é necessário que você informe seu usuário."
+                        validatorMessage="usuário deve conter entre 6 e 20 caracteres.">
+                        <f:validateLength minimum="6" maximum="20" />
+                        <f:ajax event="blur" render="m_inputuser" />
+                    </h:inputText>
+                    <h:message id="m_inputuser" for="inputuser" style="color:#D74937;" />
+                </div>
+            </div>
+             
+             
+            <div class="form-group">
+                <h:outputLabel for="password" value="Senha"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-6">
+                    <h:inputSecret value="#{user.user.password}" id="password"
+                        styleClass="form-control"
+                        pt:placeholder="Senha entre 6 e 20 caracteres"
+                       required="#{param['form:idBotao']==null}"
+                        requiredMessage="é necessário que você informe sua senha."
+                        validatorMessage="a senha deve conter entre 6 e 20 caracteres."
+                        binding="#{passwordComponent}">
+                        <f:validateLength minimum="6" maximum="20" />
+                        <f:ajax event="blur" render="m_password" />
+                    </h:inputSecret>
+                    <h:message id="m_password" for="password" style="color:#D74937;" />
+                </div>
+            </div>
+ 
+            <div class="form-group">
+                <h:outputLabel for="confirmPassword" value="Confirme a senha"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-6">
+                    <h:inputSecret id="confirmPassword" required="#{not empty passwordComponent.value}"
+                        styleClass="form-control"
+                        pt:placeholder="Confirme a senha"
+                        requiredMessage="é necessário que você informe a confirmação de sua senha.">                        
+                        <f:validator validatorId="confirmPasswordValidator" />
+                        <f:attribute name="passwordComponent" value="#{passwordComponent}" />
+                        <f:ajax event="blur" execute="confirmPassword password" render="m_confirm" />                       
+                    </h:inputSecret>
+                    <h:message id="m_confirm" for="confirmPassword" style="color:#D74937;" />
+                </div>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="inputfirstname" value="Primeiro nome"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-7">
+                    <h:inputText value="#{user.profile.firstName}" class="form-control"
+                        id="inputfirstname"
+                        pt:placeholder="Primeiro nome entre 2 e 30 caracteres"
+                       required="#{param['form:idBotao']==null}"
+                        validatorMessage="primeiro nome deve conter entre 2 e 30 caracteres."
+                        requiredMessage="é necessário que você informe seu primeiro nome.">
+                        <f:validateLength minimum="2" maximum="30" />
+                        <f:ajax event="blur" render="m_inputfirstname" />
+                    </h:inputText>
+                    <h:message id="m_inputfirstname" for="inputfirstname"
+                        style="color:#D74937;" />
+                </div>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="inputlastname" value="Sobrenome"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-8">
+                    <h:inputText value="#{user.profile.lastName}" class="form-control"
+                        id="inputlastname"
+                        pt:placeholder="Sobrenome entre 2 e 40 caracteres"
+                        required="#{param['form:idBotao']==null}"
+                        validatorMessage="sobrenome nome deve conter entre 2 e 40 caracteres."
+                        requiredMessage="é necessário que você informe seu sobrenome.">
+                        <f:validateLength minimum="2" maximum="40" />
+                        <f:ajax event="blur" render="m_inputlastname" />
+                    </h:inputText>
+                    <h:message id="m_inputlastname" for="inputlastname"
+                        style="color:#D74937;" />
+                </div>
+            </div>
+ 
+     
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                    <h:commandButton id="idBotao"  action="#{user.save}" value="Salvar" 
+                        styleClass="btn btn-default" />
+                </div>
+            </div>
+
+            </p:fieldset>
+        </h:form>
+        
+    </div>
+</ui:composition>

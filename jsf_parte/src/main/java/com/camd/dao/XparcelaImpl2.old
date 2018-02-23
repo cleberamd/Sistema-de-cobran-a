@@ -1,0 +1,187 @@
+package com.camd.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import java.util.List;
+
+import org.hibernate.Session;
+
+import com.camd.model.Cliente;
+import com.camd.model.Xparcela;
+
+public class XparcelaImpl2 implements XparcelaDao {
+	
+
+    private Session session;
+    private String connectionUrl = "jdbc:sqlserver://192.168.2.13:1433;" +  
+			   "databaseName=Corpore05012017;user=rm;password=rm;";  
+		
+    public void setSession(Session session) {
+        this.session = session;
+    }
+    
+   @Override
+	public List<Cliente> BuscaParc() { 
+	   List<Cliente> listaCl = new ArrayList<>();
+	   List<Xparcela> listaXp = new ArrayList<>();
+	   List<Cliente> listaFimCl = new ArrayList<>();
+	   List<Xparcela> listaFimXp ;
+		Cliente cliente;
+		Xparcela xp ;
+		
+		
+	
+		 Connection con;
+		try {
+			con = conex();
+		
+		 
+		   String sql = "SELECT\r\n" + 
+		   		"CC.CODCCUSTO,\r\n" + 
+		   		" L.CODCFO,\r\n" + 
+		   		"  C.CGCCFO,\r\n" + 
+		   		" C.NOME AS CLIENTE,\r\n" + 
+		   		" L.IDLAN,\r\n" + 
+		   		" B.IDBOLETO,\r\n" + 
+		   		" b.NOSSONUMERO,\r\n" + 
+		   		" B.VALOR,\r\n" + 
+		   		" B.VENCIMENTO,\r\n" + 
+		   		" C.RUA,\r\n" + 
+		   		" C.NUMERO,\r\n" + 
+		   		" C.COMPLEMENTO,\r\n" + 
+		   		" C.CIDADE,\r\n" + 
+		   		" C.CODETD,\r\n" + 
+		   		" C.CEP\r\n" + 
+		   		"FROM FLAN L (NOLOCK) \r\n" + 
+		   		" INNER JOIN FLANBOLETO LB (NOLOCK) ON (L.CODCOLIGADA = LB.CODCOLIGADA AND L.IDLAN=LB.IDLAN)\r\n" + 
+		   		" INNER JOIN FBOLETO B (NOLOCK) ON (L.CODCOLIGADA = B.CODCOLIGADA AND LB.IDBOLETO = B.IDBOLETO)\r\n" + 
+		   		" INNER JOIN FCFO C (NOLOCK) ON (L.CODCOLIGADA = C.CODCOLIGADA AND L.CODCFO = C.CODCFO)\r\n" + 
+		   		" INNER JOIN GCCUSTO CC (NOLOCK) ON (L.CODCOLIGADA = CC.CODCOLIGADA AND L.CODCCUSTO = CC.CODCCUSTO)\r\n" + 
+		   		"WHERE L.CODCOLIGADA = 1\r\n" + 
+		   		" AND L.STATUSLAN IN (0)\r\n" + 
+		   		" AND L.PAGREC = 1\r\n" + 
+		   		"    AND B.VENCIMENTO >= '2017-01-01'\r\n" + 
+		   		"    AND B.VENCIMENTO <= getdate()\r\n" + 
+		   		" AND B.STATUS = 0\r\n" + 
+		   		"order by B.VENCIMENTO, C.NOME";
+		    PreparedStatement stmt = con.prepareStatement(sql);
+		  //  stmt.setString(1, pes.getCpf());    //coloca a String de pes.getCpf() no 
+		                                        //lugar do ? na sentença SQL
+		    ResultSet rs = stmt.executeQuery(); //executa query e armazena resultado em rs
+
+		    while(rs.next()) {   //enquanto tiver resultados, anda para o próxima
+		    	
+		        			
+				    	cliente = new Cliente();
+				    	cliente.setCodcfo(rs.getString("CODCFO"));
+				    	cliente.setNome(rs.getString("CLIENTE"));
+				    	cliente.setCpf(rs.getString("CGCCFO"));
+				    	cliente.setRua(rs.getString("RUA"));
+				    	cliente.setNumero(rs.getString("NUMERO"));
+				    	cliente.setComplemento(rs.getString("COMPLEMENTO"));
+				    	cliente.setCidade(rs.getString("CIDADE"));
+				    	cliente.setEstado(rs.getString("CODETD"));
+				    	cliente.setCep(rs.getString("CEP"));
+				    	listaCl.add(cliente);
+				    	
+				    	listaXp = new ArrayList<Xparcela>();
+				    	xp = new Xparcela();
+					    xp.setCodcfo(rs.getString("CGCCFO"));
+				    	xp.setIdlan(rs.getInt("IDLAN"));
+						xp.setCcusto(rs.getString("CODCCUSTO"));
+						xp.setIdboleto(rs.getInt("IDBOLETO"));
+						xp.setNossonumero(rs.getString("NOSSONUMERO"));
+						xp.setValor(rs.getDouble("VALOR"));
+						xp.setVencimento(rs.getDate("VENCIMENTO"));
+						listaXp.add(xp);
+				    				    		 
+						
+					}
+		    		
+
+		    rs.close();
+		    stmt.close();
+		    con.close();
+
+		    
+
+		 
+		 
+
+		} catch (SQLException e) {
+			System.out.println("Erro ao conectar ao bonco de dados!");
+			e.printStackTrace();
+		}
+		
+		
+		for (Cliente c : listaCl) {
+			
+			for (int i = 0; i >= listaFimCl.size(); ) {
+				
+				
+			
+			//for (Cliente c1 : listaFimCl) {
+				
+				if (!c.getCodcfo().contains(listaFimCl.get(i).getCodcfo())) {
+					listaFimXp = new ArrayList<>();
+					
+					for (Xparcela xp1 : listaXp) {
+						
+						if (xp1.getCodcfo().contains(c.getCodcfo())) {
+							listaFimXp.add(xp1);
+						}
+						
+					}
+					
+					
+					c.setParcelas(listaFimXp);
+					listaFimCl.add(c);
+					
+					
+					
+				}
+				i++;
+			}
+			
+			
+		}
+		
+		
+		System.out.println("esse foram carregados");
+		for (Cliente k : listaFimCl) {
+			System.out.println(k.getNome());
+		}
+		
+		
+		
+		return listaFimCl;
+		
+		
+		
+	
+	}
+
+		
+	
+	private Connection conex() throws SQLException {
+		Connection con = DriverManager.getConnection(connectionUrl); 
+		
+		return con;
+	}
+
+	@Override
+	public void save(List<Xparcela> xparcela) {
+		 session.saveOrUpdate(xparcela);
+		
+	}
+
+
+
+
+
+}

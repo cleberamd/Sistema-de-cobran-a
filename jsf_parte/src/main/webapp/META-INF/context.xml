@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context reloadable="true">
+    <Resource name="jdbc/myimage" auth="Container"
+        type="javax.sql.DataSource"
+        maxActive="15" maxIdle="10" maxWait="1000"
+        username="rm"
+        password="rm" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        url="jdbc:sqlserver://192.168.2.6:1433;databaseName=myimage" />
+        
+        
+</Context>

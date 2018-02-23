@@ -1,0 +1,170 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<div class="col-md-8" >
+
+	<h:form id="form2"  class="form-horizontal"  >
+		<p:growl id="msgs" showDetail="true" />
+		
+		<p:fieldset rendered="#{config.exibeDiv == 'listarUsuario'}" legend="Lista de usuarios." style="margin:20px">
+
+		<p:dataTable var="us" value="#{config.listaUser}" filteredValue="#{config.profileFiltrado}" rowKey="#{us.id}" widgetVar="logins" 
+			scrollable="false" emptyMessage="Sem registro!" rows="6"
+			paginator="true"  paginatorPosition="bottom" 
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<f:facet name="header">  
+                                    <p:outputPanel style="text-align: left">                                        
+									  <p:inputText id="globalFilter"  style="width:150px; margin-right: 10px;" /> 
+                                      <p:commandButton value="Localizar " onclick="PF('logins').filter()" global="false" />                                     
+                                    </p:outputPanel>  
+                                </f:facet>
+			<p:column headerText="login" filterBy="#{us.user.login}" filterStyle="display: none" sortBy="#{us.user.login}" 	>
+
+
+				<h:outputText value="#{us.user.login}" />
+			</p:column>
+
+			<p:column headerText="Nome" filterBy="#{us.firstName}" sortBy="#{us.firstName}" filterStyle="display: none"	>
+
+
+				<h:outputText value="#{us.firstName} #{us.lastName}" />
+			</p:column>
+			
+			<p:column style="width:50px;text-align: center">
+             <p:commandButton  update=":form2:userDetail" oncomplete="PF('userOP').show()" icon="ui-icon-search" title="View" global="false">
+                <f:setPropertyActionListener value="#{us}" target="#{config.selectedUser}" />
+            </p:commandButton>
+        </p:column>
+</p:dataTable>
+		
+
+
+<p:dialog widgetVar="userOP" modal="true" showEffect="fade" hideEffect="fade" resizable="false" global="false"  >
+       
+           
+            
+				<p:fieldset legend="Editar um usuario." id="userDetail">
+				<div class="row" style="width:500px" >
+            <div class="form-group">
+                <h:outputLabel for="inputEmail" value="Email"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-5">
+                    <p:inputText value="#{config.email}" validatorMessage="email inválido." id="inputEmail" style="width:250px">
+                    
+                    <f:validateRegex pattern="[a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9\-\_\.]+" />
+                     <f:ajax event="blur" render="m_inputEmail" />
+                    </p:inputText>
+                    <h:message id="m_inputEmail" for="inputEmail"
+                        style="color:#D74937;" />
+                    
+                </div>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="inputuser" value="Usuário"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-6">
+                    <h:inputText value="#{config.usuario}" class="form-control"  id="inputuser" validatorMessage="usuário deve conter entre 6 e 20 caracteres." style="width:250px">
+                     <f:validateLength minimum="6" maximum="20" />
+                        <f:ajax event="blur" render="m_inputuser" />
+                    
+                      </h:inputText>
+                  <h:message id="m_inputuser" for="inputuser" style="color:#D74937;" />
+                    
+                </div>
+            </div>
+             
+             
+            <div class="form-group">
+                <h:outputLabel for="password" value="Senha"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-6">
+                    <h:inputSecret value="#{config.senha}" id="password"
+                        styleClass="form-control" validatorMessage="a senha deve conter entre 6 e 20 caracteres." style="width:250px">
+              
+              <f:validateLength minimum="6" maximum="20" />
+                        <f:ajax event="blur" render="m_password" />
+              
+              </h:inputSecret>
+                    <h:message id="m_password" for="password" style="color:#D74937;" />
+                </div>
+            </div>
+ 
+  
+            
+            <div class="form-group">
+                <h:outputLabel for="inputfirstname" value="Primeiro nome"
+                    styleClass="col-sm-3 control-label"/>
+            
+                    
+                <div class="col-sm-7">
+                    <h:inputText value="#{config.nome}" class="form-control" validatorMessage="primeiro nome deve conter entre 2 e 30 caracteres." id="inputfirstname" style="width:250px">
+             <f:validateLength minimum="2" maximum="30" />
+                        <f:ajax event="blur" render="m_inputfirstname" />
+                        
+                   </h:inputText>
+                   <h:message id="m_inputfirstname" for="inputfirstname"
+                        style="color:#D74937;" />
+                </div>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="inputlastname" value="Sobrenome"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-8">
+                    <h:inputText value="#{config.sobreNome}" class="form-control" validatorMessage="sobrenome nome deve conter entre 2 e 40 caracteres."  id="inputlastname" style="width:250px">
+                     <f:validateLength minimum="2" maximum="40" />
+                        <f:ajax event="blur" render="m_inputlastname" />
+                    </h:inputText>
+    
+                   <h:message id="m_inputlastname" for="inputlastname"
+                        style="color:#D74937;" />
+                </div>
+                
+            </div>
+             <div class="form-group">
+                <h:outputLabel for="status" value="Ativo"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-8">
+  				<h:selectBooleanCheckbox  value="#{config.status}" id="status"/>
+               </div>
+                            
+                
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel  value="Administrador"
+                    styleClass="col-sm-3 control-label" />
+                <div class="col-sm-8">
+  				<h:selectBooleanCheckbox  value="#{config.admin}" />
+               </div>
+
+               
+                
+            </div>
+            
+ 
+     
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                    <h:commandButton action="#{config.saveUsuario}" value="Salvar"
+                        styleClass="btn btn-default"  />
+                </div>
+            </div>
+            </div>
+            </p:fieldset>
+          
+                
+      
+</p:dialog>
+		
+		
+		
+		</p:fieldset>
+	</h:form>
+	</div>
+</ui:composition>
+

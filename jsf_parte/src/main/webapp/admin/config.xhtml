@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"    
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <h:outputStylesheet library="custom/css" name="custom.css" />
+</h:head>
+<h:body>
+<ui:composition template="/user_common/template_common.xhtml">
+    <ui:define name="nav_bar">
+        <ui:include src="top_bar.xhtml"/>
+    </ui:define>
+    <ui:define name="container">
+			<div class="row" style="padding-top: 100px;">
+
+				<div>
+						<p:fieldset legend="Configurações." >
+	<h:form onkeypress="return event.keyCode != 13" id="form" class="form-horizontal" >
+		<p:growl id="msgs" showDetail="true" />
+
+		
+				<p:commandButton value="Sincronizar" actionListener="#{config.atualizaClientesParcelas}" update=":form:msgs form" icon="ui-icon-transferthick-e-w" title="Atualiza e importa"  role="button"  />
+				<p:commandButton value="Criar usuario" actionListener="#{config.register}" update=":form3 :form2" icon="ui-icon-plusthick" title="Criar novo usuario" style="margin:5px" role="button"  />
+				<p:commandButton  value="Listar usuario"  actionListener="#{config.usuarios}" update=":form3 :form2" icon="ui-icon-folder-open" title="Listar usuarios" style="margin:5px" role="button"  />
+
+
+		
+  
+	</h:form>
+		<ui:include src="/admin/tabela4.xhtml" />
+	<ui:include src="/admin/form_register.xhtml" />
+
+
+					</p:fieldset>
+		 
+				</div>
+
+	
+
+			</div>
+		
+           
+        
+		</ui:define>
+</ui:composition>
+</h:body>
+</html>
